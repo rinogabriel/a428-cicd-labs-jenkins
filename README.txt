@@ -1,128 +1,110 @@
-# 🚀 Continuous Integration Pipeline dengan Jenkins
+# a428-cicd-labs-jenkins
 
-## 📌 Deskripsi
+Proyek ini dibuat sebagai bagian dari pembelajaran Continuous Integration/Continuous Deployment (CI/CD) menggunakan Jenkins. Dalam repositori ini, pipeline Jenkins didefinisikan menggunakan `Jenkinsfile` yang dijalankan otomatis setelah integrasi dengan GitHub berhasil dilakukan.
 
-Repositori ini berisi contoh implementasi **Continuous Integration (CI) Pipeline menggunakan Jenkins** untuk aplikasi **React**. Dengan pipeline ini, setiap perubahan pada kode akan **di-build dan diuji secara otomatis**, meningkatkan efisiensi dalam pengembangan perangkat lunak.
+## Tujuan
 
-## 🔧 Prasyarat
-Sebelum memulai, pastikan Anda telah menginstal:
-- **Docker** & **Docker Compose**
-- **Git**
-- **Jenkins**
-- **Node.js** & **npm**
+- Men-setup Jenkins secara lokal
+- Menghubungkan Jenkins ke repository GitHub
+- Membuat pipeline otomatis menggunakan Jenkinsfile
+- Menjalankan tahapan Build, Test, dan Deploy secara otomatis
 
-## 📂 Struktur Direktori
-```
-├── jenkins/
-│   ├── scripts/
-│   │   ├── test.sh
-│   ├── Jenkinsfile
-├── src/
-│   ├── App.js
-│   ├── App.test.js
-├── package.json
-├── README.md
-```
+## Langkah-langkah
 
-## 🚀 Langkah-langkah Implementasi
+### 1. Clone Repository
 
-### 1️⃣ Menjalankan Jenkins di Docker
+Repository hasil fork di-clone ke lokal:
 
-```sh
-docker network create jenkins
+git clone https://github.com/rinogabriel/a428-cicd-labs-jenkins.git
 
-docker run --name jenkins-docker --detach --privileged --network jenkins \
---network-alias docker --env DOCKER_TLS_CERTDIR=/certs \
---volume jenkins-docker-certs:/certs/client --volume jenkins-data:/var/jenkins_home \
---publish 2376:2376 --publish 3000:3000 --restart always docker:dind --storage-driver overlay2
-```
+markdown
+Copy
+Edit
 
-### 2️⃣ Menjalankan Jenkins dengan Blue Ocean UI
-```sh
-docker build -t myjenkins-blueocean:2.346.1-1 .
+### 2. Setup Jenkins
 
-docker run --name jenkins-blueocean --detach --network jenkins \
---env DOCKER_HOST=tcp://docker:2376 --env DOCKER_CERT_PATH=/certs/client \
---env DOCKER_TLS_VERIFY=1 --publish 8080:8080 --publish 50000:50000 \
---volume jenkins-data:/var/jenkins_home --volume jenkins-docker-certs:/certs/client:ro \
---volume "$HOME":/home --restart=on-failure \
---env JAVA_OPTS="-Dhudson.plugins.git.GitSCM.ALLOW_LOCAL_CHECKOUT=true" \
-myjenkins-blueocean:2.346.1-1
-```
+- Jenkins diinstal secara lokal
+- Plugin yang digunakan: Git, Pipeline
+- Jenkins dijalankan melalui browser: `http://localhost:8080`
 
-### 3️⃣ Konfigurasi Jenkins
-1. **Buka Jenkins**: `http://localhost:8080`
-2. **Unlock Jenkins** dengan password dari log:
-   ```sh
-   docker logs jenkins-blueocean
-   ```
-3. **Install Suggested Plugins**.
-4. **Buat Admin User** dan **Save Configuration**.
+### 3. Integrasi GitHub ke Jenkins
 
-### 4️⃣ Clone Repository & Konfigurasi Pipeline
+- Membuat Jenkins job bertipe *Pipeline*
+- Menentukan Source Code Management → Git
+- Mengisi Repository URL:
 
-```sh
-git clone -b react-app https://github.com/USERNAME-GITHUB/a428-cicd-labs.git
-cd a428-cicd-labs
-```
+https://github.com/rinogabriel/a428-cicd-labs-jenkins.git
 
-1. **Buka Jenkins** → **Create a new job** → Pilih **Pipeline**
-2. **Pilih** `Pipeline script from SCM` → **Masukkan Repository URL**
-3. **Branch Specifier**: `*/react-app`
-4. **Simpan dan Jalankan Pipeline**
+markdown
+Copy
+Edit
 
-### 5️⃣ Membuat Jenkinsfile
-Buat file `Jenkinsfile` di root proyek dengan isi berikut:
+- Branch: `react-app`
 
-```groovy
+### 4. Menambahkan Jenkinsfile
+
+File `Jenkinsfile` ditambahkan ke root folder dengan isi sebagai berikut:
+
 pipeline {
-    agent {
-        docker {
-            image 'node:16-buster-slim'
-            args '-p 3000:3000'
+agent any
+
+javascript
+Copy
+Edit
+stages {
+    stage('Build') {
+        steps {
+            echo 'Building...'
         }
     }
-    stages {
-        stage('Build') {
-            steps {
-                sh 'npm install'
-            }
+    stage('Test') {
+        steps {
+            echo 'Testing...'
         }
-        stage('Test') {
-            steps {
-                sh './jenkins/scripts/test.sh'
-            }
+    }
+    stage('Deploy') {
+        steps {
+            echo 'Deploying...'
         }
     }
 }
-```
+}
 
-### 6️⃣ Commit & Push Jenkinsfile
-```sh
-git add Jenkinsfile
-git commit -m "Add Jenkinsfile"
-git push origin react-app
-```
+markdown
+Copy
+Edit
 
-### 7️⃣ Menjalankan Pipeline
-1. **Buka Jenkins → Blue Ocean UI**
-2. **Jalankan Pipeline**
-3. **Pastikan semua tahap berhasil (Build & Test)** ✅
+### 5. Menjalankan Pipeline
 
-### 🔄 Mengelola Jenkins
-**Menjalankan ulang Jenkins jika dihentikan:**
-```sh
-docker start jenkins-blueocean jenkins-docker
-```
-**Menghentikan Jenkins:**
-```sh
-docker stop jenkins-blueocean jenkins-docker
-```
+- Jenkins otomatis mendeteksi `Jenkinsfile` dan menjalankan pipeline
+- Tahap Build, Test, dan Deploy berhasil dijalankan di Jenkins console
 
-## 🎯 Kesimpulan
-Dengan mengikuti langkah-langkah di atas, Anda telah berhasil mengimplementasikan **CI Pipeline dengan Jenkins**. Pipeline ini memastikan bahwa setiap perubahan pada aplikasi diuji dan dibangun secara otomatis, meningkatkan efisiensi dalam pengembangan perangkat lunak. 🚀
+## Status Proyek
 
----
-**📢 Catatan:** Jika mengalami error, cek log Jenkins dan pastikan semua dependensi telah diinstal dengan benar.
+- [x] Repository berhasil terhubung ke Jenkins
+- [x] Jenkinsfile berhasil dieksekusi
+- [x] Pipeline berjalan dengan tahapan yang sudah didefinisikan
 
-Happy coding! 🎉
+## Struktur Folder
+
+a428-cicd-labs-jenkins/
+├── Jenkinsfile
+└── README.md
+
+markdown
+Copy
+Edit
+
+## Author
+
+Rino Gabriel  
+Proyek ini dikerjakan sebagai bagian dari tugas/lab CI/CD menggunakan Jenkins.
+
+## Catatan
+
+Untuk mencoba proyek ini:
+
+1. Install Jenkins secara lokal
+2. Fork dan clone repository ini
+3. Tambahkan Jenkinsfile jika perlu
+4. Jalankan build pipeline dari Jenkins dashboard
