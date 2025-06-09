@@ -17,9 +17,6 @@ Repository hasil fork di-clone ke lokal:
 
 git clone https://github.com/rinogabriel/a428-cicd-labs-jenkins.git
 
-markdown
-Copy
-Edit
 
 ### 2. Setup Jenkins
 
@@ -35,10 +32,6 @@ Edit
 
 https://github.com/rinogabriel/a428-cicd-labs-jenkins.git
 
-markdown
-Copy
-Edit
-
 - Branch: `react-app`
 
 ### 4. Menambahkan Jenkinsfile
@@ -48,9 +41,6 @@ File `Jenkinsfile` ditambahkan ke root folder dengan isi sebagai berikut:
 pipeline {
 agent any
 
-javascript
-Copy
-Edit
 stages {
     stage('Build') {
         steps {
@@ -70,10 +60,6 @@ stages {
 }
 }
 
-markdown
-Copy
-Edit
-
 ### 5. Menjalankan Pipeline
 
 - Jenkins otomatis mendeteksi `Jenkinsfile` dan menjalankan pipeline
@@ -90,10 +76,6 @@ Edit
 a428-cicd-labs-jenkins/
 ├── Jenkinsfile
 └── README.md
-
-markdown
-Copy
-Edit
 
 ## Author
 
